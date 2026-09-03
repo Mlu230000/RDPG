@@ -28,10 +28,10 @@ See `/docs/erd.png` for the full diagram with attributes, primary keys, foreign 
 
 ```
 /docs
-  erd.png                 - Entity Relationship Diagram (Section A)
+  prog erd.docs           - Entity Relationship Diagram (Section A)
   api_endpoint_plan.md    - Full API endpoint specification table (Section B)
   raceday_schema.sql      - T-SQL schema + seed data, SSMS-compatible (Section C)
-  ci-screenshot.png       - [add: screenshot of a successful CI run]
+  ci-screenshot.png       - [Screenshot 2026-09-03 214303]
 README.md                 - this file
 ```
 
