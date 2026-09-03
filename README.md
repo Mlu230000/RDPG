@@ -22,7 +22,7 @@ Six entities: **Users**, **Events**, **Categories**, **Routes**, **Enrolments**,
 - A Participant (User) submits many Enrolments (1–\*), and each Category receives many Enrolments (1–\*) — a participant can only enrol once per category (enforced by a `UNIQUE(participant_id, category_id)` constraint).
 - Each Enrolment produces at most one Result (1–1).
 
-See `/docs/erd.png` for the full diagram with attributes, primary keys, foreign keys, and cardinality.
+See `/prog erd.docx` for the full diagram with attributes, primary keys, foreign keys, and cardinality.
 
 ## Repository Structure
 
