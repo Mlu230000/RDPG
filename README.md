@@ -44,6 +44,6 @@ README.md                 - this file
 
 ## Video Walkthrough
 
-[add: link to video presentation]
+[presentation]
 
 The video explains the reasoning behind the ERD's entity/relationship choices, the API endpoint plan's structure, and demonstrates the SQL script running live in SSMS.
