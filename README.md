@@ -1,49 +1,46 @@
 # RaceDay
 
-RaceDay is a full-stack, cloud-aware event management platform built for South Africa's road running, walking, and cycling community. It replaces the paper-based registration, spreadsheets, and disconnected communication that currently burden event organisers, giving them a single system to create and manage events, categories, and results — while participants can browse events, enter races, track their personal performance history, and prepare for race day with live weather and route information.
+![CI](https://github.com/YOUR-USERNAME/RDPG/actions/workflows/ci.yml/badge.svg)
 
-This repository covers **Part 1** of the project: data modelling, API planning, and database implementation, completed before any application code is written.
+RaceDay is a platform for organising and entering running, cycling and walking events in South Africa. Organisers create events, add race categories (e.g. 10km, 42km) and capture results. Participants browse events, enrol in a category and view their own results history.
 
-## System Description
+## Repository contents
 
-RaceDay is organised around two user roles that share a single account system:
+| File | Purpose |
+|---|---|
+| `Prog ERD.docx` | Entity Relationship Diagram (8 entities) |
+| `raceday_schema.sql` | SQL Server script: creates the `RaceDay` database, tables, constraints and seed data |
+| `api_endpoint_plan.md` | Planned REST API endpoints, roles, request bodies and responses |
+| `.github/workflows/ci.yml` | Continuous Integration pipeline |
 
-- **Organiser** — creates and manages events, defines categories (e.g. 10km, 21km) for each event, defines each category's route, reviews enrolments, and captures/corrects results.
-- **Participant** — browses upcoming events, enrols into a category, views their own enrolments, checks live weather and route info ahead of race day, and reviews their personal performance history across past events.
+## Database design
 
-### Data model
+Entities: **Roles, Users, EventTypes, Events, Categories, Routes, Enrolments, Results**.
 
-Six entities: **Users**, **Events**, **Categories**, **Routes**, **Enrolments**, **Results**.
+- A Role has many Users (Organiser or Participant).
+- An EventType (Running, Cycling, Walking) has many Events.
+- An Organiser (User) creates many Events.
+- An Event offers many Categories; each Category has exactly one Route.
+- A Participant (User) enrols in Categories (no duplicate enrolments).
+- Each Enrolment produces at most one Result.
 
-- A Users row is either an Organiser or a Participant (`role` column) — one login/profile table, two behavioural roles.
-- An Organiser (User) creates many Events (1–\*).
-- An Event offers many Categories (1–\*).
-- Each Category has exactly one Route (1–1).
-- A Participant (User) submits many Enrolments (1–\*), and each Category receives many Enrolments (1–\*) — a participant can only enrol once per category (enforced by a `UNIQUE(participant_id, category_id)` constraint).
-- Each Enrolment produces at most one Result (1–1).
+## Running the database script
 
-See `/prog erd.docx` for the full diagram with attributes, primary keys, foreign keys, and cardinality.
+1. Open `raceday_schema.sql` in SQL Server Management Studio.
+2. Connect to your SQL Server instance (e.g. `localhost\SQLEXPRESS`).
+3. Click **Execute**. The script is safe to re-run: it creates the database if missing and drops/recreates the tables.
 
-## Repository Structure
+## Continuous Integration
 
-```
-/docs
-  prog erd.docs           - Entity Relationship Diagram (Section A)
-  api_endpoint_plan.md    - Full API endpoint specification table (Section B)
-  raceday_schema.sql      - T-SQL schema + seed data, SSMS-compatible (Section C)
-  ci-screenshot.png       - [Screenshot 2026-09-03 214303]
-README.md                 - this file
-```
+On every push and pull request to `main`, GitHub Actions:
 
-## Setup Notes
+1. Checks that the required project files exist.
+2. Starts a SQL Server 2022 container.
+3. Runs `raceday_schema.sql` and fails on any SQL error.
+4. Verifies that all 8 tables were created.
 
-1. Open `docs/raceday_schema.sql` in SQL Server Management Studio (SSMS).
-2. Run the script against a fresh SQL Server instance — it creates the `RaceDay` database, all six tables with keys and constraints, and seeds realistic sample data (2 organisers, 2 participants, 3 events, categories and routes per event, and sample enrolments/results).
-3. The script is idempotent: re-running it drops and recreates the tables in FK-safe order, so it's safe to run repeatedly during development.
-4. Sanity-check queries are commented out at the bottom of the script — uncomment to spot-check the seeded data.
+See the **Actions** tab for run history.
 
-## Video Walkthrough
+## API
 
-[presentation]
-
-The video explains the reasoning behind the ERD's entity/relationship choices, the API endpoint plan's structure, and demonstrates the SQL script running live in SSMS.
+All planned endpoints are documented in [`api_endpoint_plan.md`](api_endpoint_plan.md).
