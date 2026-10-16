@@ -1,1 +1,43 @@
+name: CI
 
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          test -f raceday_schema.sql
+          test -f api_endpoint_plan.md
+          test -f README.md
+
+      - name: Start SQL Server
+        run: |
+          docker run -d --name sql -e ACCEPT_EULA=Y \
+            -e MSSQL_SA_PASSWORD='RaceDay_Pass123!' \
+            -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+          for i in $(seq 1 30); do
+            docker exec sql /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa \
+              -P 'RaceDay_Pass123!' -Q "SELECT 1" && break
+            sleep 3
+          done
+
+      - name: Run schema script
+        run: |
+          docker cp raceday_schema.sql sql:/tmp/raceday_schema.sql
+          docker exec sql /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa \
+            -P 'RaceDay_Pass123!' -i /tmp/raceday_schema.sql
+
+      - name: Verify all 8 tables were created
+        run: |
+          docker exec sql /opt/mssql-tools18/bin/sqlcmd -C -b -S localhost -U sa \
+            -P 'RaceDay_Pass123!' -d RaceDay -h -1 -W \
+            -Q "SET NOCOUNT ON; IF (SELECT COUNT(*) FROM sys.tables) <> 8 RAISERROR('Expected 8 tables',16,1);"
