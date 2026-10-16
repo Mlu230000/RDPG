@@ -1,6 +1,6 @@
 # RaceDay
 
-![CI](https://github.com/YOUR-USERNAME/RDPG/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Mlu230000/RDPG/actions/workflows/ci.yml/badge.svg)
 
 RaceDay is a platform for organising and entering running, cycling and walking events in South Africa. Organisers create events, add race categories (e.g. 10km, 42km) and capture results. Participants browse events, enrol in a category and view their own results history.
 
