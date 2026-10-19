@@ -1,24 +1,12 @@
-# RaceDay — RESTful API Platform (Part 2)
+# RaceDay —  API Platform (Part 2)
 
 ![RaceDay CI/CD](https://github.com/Mlu230000/RDPG/actions/workflows/ci.yml/badge.svg)
 
 RaceDay is a platform for organising and entering running, cycling, and walking events in South Africa. This repository contains the complete **ASP.NET Core Web API** backend built with **Entity Framework Core (Code-First Approach)**, connected to a **SQL Server** database, with **Role-Based Session & JWT Authentication**, **Swagger UI Documentation**, and comprehensive **xUnit Unit Tests** automated via **GitHub Actions CI/CD**.
 
----
 
-## 📺 Demonstration Video
-- **YouTube Link**: `https://youtu.be/YOUR_UNLISTED_VIDEO_LINK_HERE` *(Replace with your unlisted YouTube demonstration link)*
-- In the video demonstration:
-  1. Overview of project architecture & 8 database entities.
-  2. Running the API and demonstrating the Swagger UI at `/swagger`.
-  3. Registering users and logging in as **Organiser** and **Participant**.
-  4. Role-based access control demonstrations (allowed vs. forbidden requests).
-  5. Event creation, category/route definition, participant enrolment, and finish-time capture.
-  6. Running all unit tests locally showing green passes.
 
----
-
-## 🏗️ Architecture & Entities (8 Relational Entities)
+##  Architecture & Entities (8 Relational Entities)
 
 The database schema strictly adheres to the approved Part 1 ERD and SQL Server script (`raceday_schema.sql`):
 
