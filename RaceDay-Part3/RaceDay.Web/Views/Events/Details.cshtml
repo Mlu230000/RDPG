@@ -1,0 +1,173 @@
+@model RaceDay.Web.Models.EventItemViewModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = Model.EventName;
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var role = session?.GetString("Role");
+    var isLoggedIn = !string.IsNullOrEmpty(role);
+    var isParticipant = role == "Participant";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.EventName</li>
+        </ol>
+    </nav>
+
+    <!-- Large Event Banner Image (Stored in Azure Blob Storage, Requirement 5) -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="position-relative bg-dark-navy" style="max-height: 380px; overflow: hidden;">
+            @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
+            {
+                <img src="@Model.BannerImageUrl" alt="@Model.EventName" class="w-100 object-fit-cover" style="height: 360px;" onerror="this.src='https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=1200&q=80'" />
+            }
+            else
+            {
+                <img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=1200&q=80" alt="@Model.EventName" class="w-100 object-fit-cover" style="height: 360px;" />
+            }
+            <div class="position-absolute bottom-0 start-0 w-100 p-4 bg-gradient-dark-transparent text-white">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span class="badge bg-warning text-dark text-uppercase fw-bold"><i class="bi bi-tag-fill me-1"></i>@Model.EventType</span>
+                    <span class="badge bg-success text-white fw-bold">@Model.Status</span>
+                    @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
+                    {
+                        <span class="badge bg-info text-dark fw-semibold"><i class="bi bi-cloud-check-fill me-1"></i>Azure Blob Banner</span>
+                    }
+                </div>
+                <h1 class="fw-black display-5 mb-0 text-white">@Model.EventName</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Event Details Column -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-info-circle-fill text-success me-2"></i>Event Information</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-calendar-event fs-4 text-primary"></i>
+                            <div>
+                                <div class="text-muted small">Race Date</div>
+                                <div class="fw-bold">@Model.EventDate.ToString("dddd, dd MMMM yyyy")</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-clock-history fs-4 text-warning"></i>
+                            <div>
+                                <div class="text-muted small">Start Time</div>
+                                <div class="fw-bold">@(Model.StartTime ?? "06:00 AM")</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-geo-alt fs-4 text-danger"></i>
+                            <div>
+                                <div class="text-muted small">Venue &amp; Location</div>
+                                <div class="fw-bold">@Model.Location, @(Model.Province ?? "South Africa")</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-person-badge fs-4 text-success"></i>
+                            <div>
+                                <div class="text-muted small">Event Organiser</div>
+                                <div class="fw-bold">@(Model.OrganiserName ?? "Comrades Association")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold">Overview</h5>
+                <p class="text-secondary leading-relaxed">
+                    @(string.IsNullOrEmpty(Model.Description) ? "Join athletes from all over South Africa in this premier sporting race. Featuring full electronic timing, hydration stations, medical support, and official medals." : Model.Description)
+                </p>
+            </div>
+
+            <!-- Available Categories (Requirement 4: Full event information and available categories) -->
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0"><i class="bi bi-distribute-vertical text-warning me-2"></i>Race Categories &amp; Distances</h4>
+                    <span class="badge bg-light text-muted">@Model.Categories.Count Categories</span>
+                </div>
+
+                @if (!Model.Categories.Any())
+                {
+                    <p class="text-muted">Categories are currently being finalized by the organiser.</p>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <div class="col-md-6">
+                                <div class="card h-100 border border-2 border-light-subtle rounded-3 p-3 category-box hover-lift">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-bold text-dark mb-0">@cat.CategoryName</h5>
+                                        <span class="badge bg-success-subtle text-success border border-success fw-bold">@cat.DistanceKm km</span>
+                                    </div>
+                                    <div class="small text-muted mb-3">
+                                        <div><i class="bi bi-cash-stack me-1"></i>Entry Fee: <strong class="text-dark">R @cat.EntryFee.ToString("F2")</strong></div>
+                                        @if (cat.MinAge.HasValue || cat.MaxAge.HasValue)
+                                        {
+                                            <div><i class="bi bi-person-fill me-1"></i>Age Limit: @(cat.MinAge ?? 0) - @(cat.MaxAge ?? 100) yrs</div>
+                                        }
+                                        <div><i class="bi bi-people-fill me-1"></i>Capacity: @(cat.MaxParticipants?.ToString() ?? "Unlimited") participants</div>
+                                    </div>
+
+                                    @if (isParticipant)
+                                    {
+                                        <!-- Instant Enrolment Button (Requirement 4) -->
+                                        <form asp-controller="Participant" asp-action="Enrol" method="post" class="mt-auto">
+                                            <input type="hidden" name="categoryId" value="@cat.CategoryId" />
+                                            <input type="hidden" name="eventId" value="@Model.EventId" />
+                                            <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Enrol in this Race
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (!isLoggedIn)
+                                    {
+                                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Events/Details/@Model.EventId" class="btn btn-outline-success w-100 rounded-pill fw-semibold mt-auto">
+                                            Log In to Enrol
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button disabled class="btn btn-secondary w-100 rounded-pill text-white mt-auto">Organiser Account</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-dark-navy text-white">
+                <h5 class="fw-bold text-warning mb-3"><i class="bi bi-shield-check me-2"></i>Race Day Checklist</h5>
+                <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
+                    <li><i class="bi bi-check2 text-success me-2"></i>Electronic chip timing included</li>
+                    <li><i class="bi bi-check2 text-success me-2"></i>Water points every 3 kilometers</li>
+                    <li><i class="bi bi-check2 text-success me-2"></i>Finisher medals &amp; digital certificate</li>
+                    <li><i class="bi bi-check2 text-success me-2"></i>Emergency medical support on route</li>
+                </ul>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                <i class="bi bi-cloud-arrow-up-fill fs-1 text-primary mb-2"></i>
+                <h6 class="fw-bold">Powered by Azure Blob Storage</h6>
+                <p class="text-muted small mb-0">Event banners and competitor profiles are securely hosted in Microsoft Azure Cloud.</p>
+            </div>
+        </div>
+    </div>
+</div>

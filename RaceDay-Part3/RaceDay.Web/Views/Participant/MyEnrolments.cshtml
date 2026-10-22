@@ -1,0 +1,89 @@
+@model List<RaceDay.Web.Models.EnrolmentItemViewModel>
+@{
+    ViewData["Title"] = "My Enrolments";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="badge bg-success-subtle text-success text-uppercase fw-bold px-2 py-1 mb-1">
+                <i class="bi bi-ticket-perforated-fill me-1"></i>My Athlete Entries
+            </div>
+            <h2 class="fw-bold mb-0">My Race Enrolments</h2>
+            <p class="text-muted small">View your official race registrations, category details, and enrolment payment status.</p>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-success rounded-pill fw-bold px-4">
+            <i class="bi bi-plus-lg me-1"></i> Enter Another Race
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-calendar-check fs-1 text-muted mb-3"></i>
+            <h4 class="fw-bold">No Active Enrolments Found</h4>
+            <p class="text-muted mb-4">You have not registered for any upcoming events yet.</p>
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-success rounded-pill px-4 fw-semibold">Browse Available Races</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var entry in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 bg-white">
+                        <div class="card-header bg-dark-navy text-white p-3 d-flex justify-content-between align-items-center">
+                            <span class="badge bg-dark font-monospace text-warning px-2 py-1">
+                                Race #@(entry.RaceNumber ?? "Pending")
+                            </span>
+                            <!-- Visual color-coded status badge (Requirement 7) -->
+                            @if (entry.PaymentStatus == "Paid" || entry.PaymentStatus == "Confirmed")
+                            {
+                                <span class="badge status-badge-confirmed px-3 py-1 rounded-pill">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Confirmed
+                                </span>
+                            }
+                            else if (entry.PaymentStatus == "Pending")
+                            {
+                                <span class="badge status-badge-pending px-3 py-1 rounded-pill">
+                                    <i class="bi bi-hourglass-split me-1"></i> Pending
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary px-3 py-1 rounded-pill">@entry.PaymentStatus</span>
+                            }
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold mb-2">@entry.EventName</h5>
+                            <div class="mb-3 small text-muted">
+                                <div><i class="bi bi-flag text-success me-2"></i><strong>Category:</strong> @entry.CategoryName</div>
+                                <div><i class="bi bi-speedometer text-primary me-2"></i><strong>Distance:</strong> @(entry.DistanceKm?.ToString("F1") ?? "10.0") km</div>
+                                <div><i class="bi bi-calendar-event text-warning me-2"></i><strong>Enrolled on:</strong> @entry.EnrolmentDate.ToString("dd MMM yyyy")</div>
+                                <div><i class="bi bi-cash-stack text-secondary me-2"></i><strong>Fee Paid:</strong> R @(entry.EntryFee?.ToString("F2") ?? "150.00")</div>
+                            </div>
+
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@entry.EventId" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                                    Event Details
+                                </a>
+                                @if (entry.HasResult)
+                                {
+                                    <a asp-action="MyResults" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">
+                                        <i class="bi bi-trophy-fill me-1"></i> View Result
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted small">Race in progress</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

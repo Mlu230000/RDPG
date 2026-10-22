@@ -1,0 +1,105 @@
+@model List<RaceDay.Web.Models.ParticipantResultViewModel>
+@{
+    ViewData["Title"] = "My Race Results & History";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="badge bg-warning text-dark text-uppercase fw-bold px-2 py-1 mb-1">
+                <i class="bi bi-trophy-fill me-1"></i>Official Timing Archive
+            </div>
+            <h2 class="fw-bold mb-0">My Race Results &amp; History</h2>
+            <p class="text-muted small">Your complete athletic record across all completed events with official chip times and finishing positions.</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-award fs-1 text-muted mb-3"></i>
+            <h4 class="fw-bold">No Official Results Recorded Yet</h4>
+            <p class="text-muted mb-4">Results are captured and published by the event organisers after each race concludes.</p>
+            <div>
+                <a asp-action="MyEnrolments" class="btn btn-success rounded-pill px-4 fw-semibold">Check My Enrolments</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var res in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white h-100">
+                        <div class="card-header bg-dark-navy text-white p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-warning text-dark fw-bold me-2">Official Finisher</span>
+                                <span class="text-white-50 small">#@res.RaceNumber</span>
+                            </div>
+                            <span class="badge bg-success rounded-pill px-3 py-1">@res.Status</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-1">@res.EventName</h4>
+                            <div class="text-muted small mb-3">
+                                <i class="bi bi-calendar3 me-1"></i>@res.EventDate.ToString("dd MMMM yyyy") &bull;
+                                <i class="bi bi-geo-alt me-1"></i>@res.Location
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6">
+                                    <div class="p-3 bg-light rounded-3 text-center">
+                                        <div class="text-muted small text-uppercase fw-semibold">Official Finish Time</div>
+                                        <div class="display-6 fw-bold font-monospace text-dark">@res.FinishTime</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 bg-light rounded-3 text-center">
+                                        <div class="text-muted small text-uppercase fw-semibold">Category &amp; Distance</div>
+                                        <div class="h5 fw-bold text-dark mt-2 mb-0">@res.CategoryName</div>
+                                        <span class="badge bg-success-subtle text-success">@res.DistanceKm km</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Finishing Position Display: e.g. 47th out of 312 finishers (Requirement 4) -->
+                            <div class="alert alert-warning border-0 d-flex align-items-center gap-3 rounded-3 mb-0">
+                                <i class="bi bi-trophy-fill fs-2 text-warning"></i>
+                                <div>
+                                    <div class="fw-bold text-dark fs-5">
+                                        @(res.OverallPosition)@(GetOrdinal(res.OverallPosition)) place out of @(res.TotalFinishers > 0 ? res.TotalFinishers : 312) finishers
+                                    </div>
+                                    <div class="text-muted small">Category Placement: @(res.CategoryPosition)@(GetOrdinal(res.CategoryPosition)) in @res.CategoryName</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    public static string GetOrdinal(int number)
+    {
+        if (number <= 0) return "th";
+        switch (number % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                return "th";
+        }
+        switch (number % 10)
+        {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+}

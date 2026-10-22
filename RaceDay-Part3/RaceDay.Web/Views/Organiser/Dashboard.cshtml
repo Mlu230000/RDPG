@@ -1,0 +1,219 @@
+@model RaceDay.Web.Models.OrganiserDashboardViewModel
+@{
+    ViewData["Title"] = "Organiser Dashboard";
+}
+
+<div class="container py-4">
+    <!-- Header with Quick Action -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="badge bg-warning text-dark text-uppercase fw-bold px-2 py-1 mb-1">
+                <i class="bi bi-shield-lock-fill me-1"></i>Organiser Control Centre
+            </div>
+            <h2 class="fw-black mb-0">Welcome back, @Model.OrganiserName</h2>
+            <p class="text-muted small mb-0">Manage your races, track real-time athlete enrolments, and publish official results.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="CreateEvent" class="btn btn-success rounded-pill fw-bold px-4 shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Create New Event
+            </a>
+            <a asp-action="Events" class="btn btn-outline-dark rounded-pill fw-medium px-3">
+                <i class="bi bi-list-ul me-1"></i> All Events
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards (Requirement 3: Summary of events created, total enrolments, upcoming dates) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-4 border-success">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Total Events</div>
+                        <div class="display-6 fw-bold text-dark">@Model.TotalEvents</div>
+                    </div>
+                    <div class="icon-circle bg-success-subtle text-success fs-4">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                </div>
+                <div class="small text-muted mt-2">
+                    <span class="text-success fw-bold"><i class="bi bi-check2"></i> @Model.ActiveEventsCount</span> active / open
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-4 border-warning">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Total Enrolments</div>
+                        <div class="display-6 fw-bold text-dark">@Model.TotalEnrolments</div>
+                    </div>
+                    <div class="icon-circle bg-warning-subtle text-warning fs-4">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+                <div class="small text-muted mt-2">
+                    Across all categories &amp; distances
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-4 border-info">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Next Race Date</div>
+                        <div class="h5 fw-bold text-dark mb-0 mt-2">
+                            @(Model.NextUpcomingEvent != null ? Model.NextUpcomingEvent.EventDate.ToString("dd MMM yyyy") : "None scheduled")
+                        </div>
+                    </div>
+                    <div class="icon-circle bg-info-subtle text-info fs-4">
+                        <i class="bi bi-stopwatch-fill"></i>
+                    </div>
+                </div>
+                <div class="small text-muted mt-2">
+                    @(Model.NextUpcomingEvent != null ? Model.NextUpcomingEvent.EventName : "Create your next event")
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-4 border-primary">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Azure Storage</div>
+                        <div class="h6 fw-bold text-primary mb-0 mt-2">Blob Containers Active</div>
+                    </div>
+                    <div class="icon-circle bg-primary-subtle text-primary fs-4">
+                        <i class="bi bi-cloud-check-fill"></i>
+                    </div>
+                </div>
+                <div class="small text-muted mt-2">
+                    <code>event-banners</code> &amp; <code>profiles</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Summary Table (Requirement 3: Total enrolments per event and upcoming dates) -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+        <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-0">
+            <h5 class="fw-bold mb-0"><i class="bi bi-calendar3 me-2 text-success"></i>My Organised Events</h5>
+            <a asp-action="CreateEvent" class="btn btn-sm btn-outline-success rounded-pill fw-semibold">
+                <i class="bi bi-plus-circle me-1"></i> New Event
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-secondary small text-uppercase">
+                    <tr>
+                        <th class="ps-4">Event &amp; Banner</th>
+                        <th>Discipline</th>
+                        <th>Date &amp; Time</th>
+                        <th>Location</th>
+                        <th>Enrolments</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Events.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-calendar-plus fs-2 text-secondary mb-2 d-block"></i>
+                                You haven't created any events yet. Click "Create New Event" to get started.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var ev in Model.Events)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-3 overflow-hidden bg-dark-navy flex-shrink-0" style="width: 54px; height: 38px;">
+                                            @if (!string.IsNullOrEmpty(ev.BannerImageUrl))
+                                            {
+                                                <img src="@ev.BannerImageUrl" alt="banner" class="w-100 h-100 object-fit-cover" onerror="this.src='https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=150&q=80'" />
+                                            }
+                                            else
+                                            {
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50 small"><i class="bi bi-image"></i></div>
+                                            }
+                                        </div>
+                                        <div>
+                                            <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId" class="fw-bold text-dark text-decoration-none">@ev.EventName</a>
+                                            <div class="text-muted small">ID: #@ev.EventId</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@ev.EventType</span>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@ev.EventDate.ToString("dd MMM yyyy")</div>
+                                    <div class="text-muted small">@(ev.StartTime ?? "06:00")</div>
+                                </td>
+                                <td>
+                                    <div class="text-dark">@ev.Location</div>
+                                    <div class="text-muted small">@(ev.Province ?? "South Africa")</div>
+                                </td>
+                                <td>
+                                    <!-- Total enrolments per event badge -->
+                                    <a asp-action="Enrolments" asp-route-id="@ev.EventId" class="badge bg-primary-subtle text-primary border border-primary px-3 py-2 text-decoration-none rounded-pill fw-bold">
+                                        <i class="bi bi-people-fill me-1"></i>@ev.EnrolmentsCount Enrolled
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge @(ev.Status == "Upcoming" ? "bg-success" : ev.Status == "Completed" ? "bg-secondary" : "bg-warning text-dark") px-2 py-1 rounded-pill">
+                                        @ev.Status
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light border rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="EditEvent" asp-route-id="@ev.EventId">
+                                                    <i class="bi bi-pencil-square text-primary me-2"></i>Edit Event &amp; Banner
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Categories" asp-route-id="@ev.EventId">
+                                                    <i class="bi bi-distribute-vertical text-warning me-2"></i>Manage Categories
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Enrolments" asp-route-id="@ev.EventId">
+                                                    <i class="bi bi-people text-success me-2"></i>View Enrolments (@ev.EnrolmentsCount)
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="ResultsEntry" asp-route-id="@ev.EventId">
+                                                    <i class="bi bi-trophy text-danger me-2"></i>Results Entry
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="DeleteEvent" asp-route-id="@ev.EventId" method="post" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-trash3 me-2"></i>Delete Event
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

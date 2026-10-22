@@ -1,0 +1,184 @@
+@model RaceDay.Web.Models.EventListViewModel
+@{
+    ViewData["Title"] = "South Africa's Premier Sports Events";
+}
+
+<!-- Hero Banner (Sporting & Energetic Theme) -->
+<section class="hero-sporting text-white py-5 position-relative overflow-hidden mb-4 shadow">
+    <div class="container position-relative z-1 py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark text-uppercase fw-extrabold px-3 py-1 mb-2">
+                    <i class="bi bi-fire me-1"></i> Season 2026 Entries Open
+                </span>
+                <h1 class="display-4 fw-black tracking-tight text-white mb-2">
+                    FIND YOUR NEXT <span class="text-gradient-race">CHALLENGE</span>
+                </h1>
+                <p class="lead text-white-50 mb-4 pe-lg-5">
+                    Official registration, live timing results, and instant event enrolment for marathon runners, trail walkers, and cyclists across South Africa.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#events-section" class="btn btn-success btn-lg px-4 rounded-pill fw-bold shadow-sm">
+                        <i class="bi bi-compass me-1"></i> Explore All Races
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg px-4 rounded-pill fw-medium">
+                        <i class="bi bi-trophy me-1"></i> Athlete Sign Up
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-center">
+                <div class="hero-stats-card p-4 rounded-4 shadow-lg text-start">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="icon-circle bg-success text-white"><i class="bi bi-flag-fill"></i></div>
+                        <div>
+                            <div class="h3 fw-bold text-white mb-0">@Model.Events.Count</div>
+                            <div class="text-white-50 small">Races Available</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="icon-circle bg-warning text-dark"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <div class="h3 fw-bold text-white mb-0">@Model.Events.Sum(e => e.EnrolmentsCount)</div>
+                            <div class="text-white-50 small">Active Athletes Enrolled</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle bg-info text-dark"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+                        <div>
+                            <div class="h4 fw-bold text-white mb-0">Azure Storage</div>
+                            <div class="text-white-50 small">Cloud Banners &amp; Profiles</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Toolbar (Requirement 4: Home page showing upcoming events with filtering options) -->
+<div class="container mb-5" id="events-section">
+    <div class="card shadow-sm border-0 rounded-4 p-3 mb-4 bg-white">
+        <form method="get" asp-action="Index" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary mb-1">Search Race / City</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control border-start-0" placeholder="e.g. Comrades, Durban..." />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-secondary mb-1">Discipline</label>
+                <select name="eventTypeId" class="form-select">
+                    <option value="">All Sports</option>
+                    <option value="1" selected="@(Model.SelectedEventTypeId == 1)">Running</option>
+                    <option value="2" selected="@(Model.SelectedEventTypeId == 2)">Cycling</option>
+                    <option value="3" selected="@(Model.SelectedEventTypeId == 3)">Walking</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-secondary mb-1">Province</label>
+                <select name="province" class="form-select">
+                    <option value="">All Provinces</option>
+                    <option value="Gauteng" selected="@(Model.SelectedProvince == "Gauteng")">Gauteng</option>
+                    <option value="KwaZulu-Natal" selected="@(Model.SelectedProvince == "KwaZulu-Natal")">KwaZulu-Natal</option>
+                    <option value="Western Cape" selected="@(Model.SelectedProvince == "Western Cape")">Western Cape</option>
+                    <option value="Eastern Cape" selected="@(Model.SelectedProvince == "Eastern Cape")">Eastern Cape</option>
+                    <option value="Mpumalanga" selected="@(Model.SelectedProvince == "Mpumalanga")">Mpumalanga</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-secondary mb-1">Min Distance</label>
+                <input type="number" step="1" name="minDistance" value="@Model.MinDistanceKm" class="form-control" placeholder="km (e.g. 10)" />
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-success flex-grow-1 rounded-pill fw-semibold">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter Events
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">Upcoming Events (@Model.Events.Count)</h3>
+        <span class="text-muted small">Updated live from RaceDay REST API</span>
+    </div>
+
+    @if (!Model.Events.Any())
+    {
+        <div class="card border-0 shadow-sm p-5 text-center rounded-4">
+            <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+            <h5 class="fw-bold">No Events Match Your Filter</h5>
+            <p class="text-muted">Try clearing search filters to see all available events across South Africa.</p>
+            <div>
+                <a asp-action="Index" class="btn btn-success rounded-pill px-4">Reset Filters</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var ev in Model.Events)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden event-card transition-all">
+                        <!-- Banner image with Azure Blob fallback -->
+                        <div class="event-banner-wrap position-relative bg-dark-navy" style="height: 180px;">
+                            @if (!string.IsNullOrEmpty(ev.BannerImageUrl))
+                            {
+                                <img src="@ev.BannerImageUrl" alt="@ev.EventName" class="w-100 h-100 object-fit-cover opacity-90" onerror="this.src='https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=600&q=80'" />
+                            }
+                            else
+                            {
+                                <img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=600&q=80" alt="@ev.EventName" class="w-100 h-100 object-fit-cover opacity-75" />
+                            }
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-dark bg-opacity-75 text-white fw-semibold rounded-pill px-2 py-1">
+                                    <i class="bi bi-tag-fill text-warning me-1"></i>@ev.EventType
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 m-2">
+                                <span class="badge @(ev.Status == "Upcoming" ? "bg-success" : "bg-primary") text-white fw-bold rounded-pill px-3 py-1 shadow">
+                                    @ev.Status
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="text-muted small fw-semibold mb-1">
+                                <i class="bi bi-calendar3 text-success me-1"></i>@ev.EventDate.ToString("ddd, dd MMM yyyy")
+                                @if (!string.IsNullOrEmpty(ev.StartTime))
+                                {
+                                    <span class="ms-1"><i class="bi bi-clock text-muted me-1"></i>@ev.StartTime</span>
+                                }
+                            </div>
+
+                            <h5 class="fw-bold mb-2">@ev.EventName</h5>
+                            
+                            <p class="text-secondary small mb-2">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>@ev.Location, @(ev.Province ?? "South Africa")
+                            </p>
+
+                            <p class="text-muted small flex-grow-1 line-clamp-2">
+                                @(string.IsNullOrEmpty(ev.Description) ? "Exciting official sports event organised with chip timing, route support, and finisher awards." : ev.Description)
+                            </p>
+
+                            <!-- Categories summary badge -->
+                            <div class="border-top pt-2 mt-auto d-flex justify-content-between align-items-center">
+                                <div class="small text-muted">
+                                    <i class="bi bi-person-check-fill text-primary me-1"></i><strong>@ev.EnrolmentsCount</strong> Enrolled
+                                </div>
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId" class="btn btn-outline-success btn-sm rounded-pill fw-semibold px-3">
+                                    View Details <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

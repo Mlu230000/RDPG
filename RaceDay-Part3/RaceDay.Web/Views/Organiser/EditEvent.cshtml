@@ -1,0 +1,103 @@
+@model RaceDay.Web.Models.EditEventViewModel
+@{
+    ViewData["Title"] = "Edit Event";
+}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-dark-navy text-white p-4">
+                    <h3 class="fw-bold mb-1">Edit Event</h3>
+                    <p class="text-white-50 small mb-0">Update event details and upload a new banner image.</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger py-2 px-3 small border-0 mb-4">
+                            <div asp-validation-summary="All" class="text-danger mb-0"></div>
+                        </div>
+                    }
+
+                    <form asp-action="EditEvent" asp-route-id="@Model.EventId" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="EventId" />
+
+                        <div class="mb-3">
+                            <label asp-for="EventName" class="form-label fw-bold small text-secondary"></label>
+                            <input asp-for="EventName" class="form-control form-control-lg" />
+                            <span asp-validation-for="EventName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold small text-secondary"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="EventDate" class="form-label fw-bold small text-secondary"></label>
+                                <input asp-for="EventDate" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="StartTime" class="form-label fw-bold small text-secondary"></label>
+                                <input asp-for="StartTime" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-7">
+                                <label asp-for="Location" class="form-label fw-bold small text-secondary"></label>
+                                <input asp-for="Location" class="form-control" />
+                            </div>
+                            <div class="col-md-5">
+                                <label asp-for="Province" class="form-label fw-bold small text-secondary"></label>
+                                <input asp-for="Province" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="EventTypeId" class="form-label fw-bold small text-secondary"></label>
+                                <select asp-for="EventTypeId" class="form-select">
+                                    <option value="1">Running</option>
+                                    <option value="2">Cycling</option>
+                                    <option value="3">Walking</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Status" class="form-label fw-bold small text-secondary"></label>
+                                <select asp-for="Status" class="form-select">
+                                    <option value="Upcoming">Upcoming</option>
+                                    <option value="Open">Open</option>
+                                    <option value="Closed">Closed</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Current Banner Preview & Upload -->
+                        <div class="card border rounded-3 p-3 mb-4 bg-light">
+                            <div class="fw-bold mb-2"><i class="bi bi-image text-primary me-1"></i>Current Azure Blob Banner:</div>
+                            @if (!string.IsNullOrEmpty(Model.ExistingBannerUrl))
+                            {
+                                <div class="mb-2 rounded-2 overflow-hidden bg-dark" style="max-height: 140px;">
+                                    <img src="@Model.ExistingBannerUrl" alt="Current Banner" class="w-100 object-fit-cover" style="max-height: 140px;" />
+                                </div>
+                                <code class="small text-truncate d-block mb-2">@Model.ExistingBannerUrl</code>
+                            }
+                            <label asp-for="BannerFile" class="form-label fw-semibold small text-secondary">Upload New Banner Image</label>
+                            <input asp-for="BannerFile" class="form-control" type="file" accept="image/*" />
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Events" class="btn btn-outline-secondary rounded-pill px-4">Back</a>
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold px-5 shadow">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+@model RaceDay.Web.Models.EventEnrolmentsViewModel
+@{
+    ViewData["Title"] = "Event Enrolments";
+}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard">Organiser</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Events">Events</a></li>
+                    <li class="breadcrumb-item active">Enrolments</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold mb-0">Enrolment Roster: @Model.EventName</h2>
+            <p class="text-muted small mb-0">
+                <i class="bi bi-calendar3 me-1"></i>@Model.EventDate.ToString("dd MMM yyyy") &bull;
+                <i class="bi bi-geo-alt me-1"></i>@Model.Location &bull;
+                <strong>@Model.Enrolments.Count</strong> registered participants
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="ResultsEntry" asp-route-id="@Model.EventId" class="btn btn-warning rounded-pill fw-bold px-3">
+                <i class="bi bi-trophy-fill me-1"></i> Enter Results
+            </a>
+            <a asp-action="Events" class="btn btn-outline-secondary rounded-pill px-3">
+                Back to Events
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Enrolled Participants</h5>
+            <span class="badge bg-light text-dark">Live Chip Timing Roster</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-uppercase text-secondary">
+                    <tr>
+                        <th class="ps-4">Race #</th>
+                        <th>Participant Name</th>
+                        <th>Email</th>
+                        <th>Category</th>
+                        <th>Distance</th>
+                        <th>Enrolment Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Enrolments.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-people fs-2 d-block mb-2"></i>
+                                No participants have enrolled for this event yet.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var p in Model.Enrolments)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-dark font-monospace px-2 py-1">@(p.RaceNumber ?? "Pending")</span>
+                                </td>
+                                <td class="fw-bold">@p.ParticipantName</td>
+                                <td class="text-muted small">@p.ParticipantEmail</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@p.CategoryName</span>
+                                </td>
+                                <td><strong>@p.DistanceKm km</strong></td>
+                                <td class="text-muted small">@p.EnrolmentDate.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    <!-- Visual distinct color coding for enrolment statuses (Requirement 7) -->
+                                    @if (p.PaymentStatus == "Paid" || p.PaymentStatus == "Confirmed")
+                                    {
+                                        <span class="badge status-badge-confirmed px-3 py-1 rounded-pill">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Confirmed
+                                        </span>
+                                    }
+                                    else if (p.PaymentStatus == "Pending")
+                                    {
+                                        <span class="badge status-badge-pending px-3 py-1 rounded-pill">
+                                            <i class="bi bi-hourglass-split me-1"></i> Pending
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-white px-3 py-1 rounded-pill">
+                                            @p.PaymentStatus
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+@model List<RaceDay.Web.Models.EventItemViewModel>
+@{
+    ViewData["Title"] = "Events Management";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Events Management</h2>
+            <p class="text-muted small">Create, edit, manage categories and delete your sports events.</p>
+        </div>
+        <a asp-action="CreateEvent" class="btn btn-success rounded-pill fw-bold px-4">
+            <i class="bi bi-plus-lg me-1"></i> Add Event
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small text-secondary">
+                    <tr>
+                        <th class="ps-4">Event Name</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Banner</th>
+                        <th>Enrolments</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ev in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventId" class="fw-bold text-dark text-decoration-none">
+                                    @ev.EventName
+                                </a>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">@ev.EventType</span></td>
+                            <td>@ev.EventDate.ToString("dd MMM yyyy")</td>
+                            <td>@ev.Location</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(ev.BannerImageUrl))
+                                {
+                                    <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>Uploaded</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted">No banner</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Enrolments" asp-route-id="@ev.EventId" class="badge bg-primary text-white text-decoration-none px-2 py-1">
+                                    @ev.EnrolmentsCount participants
+                                </a>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="EditEvent" asp-route-id="@ev.EventId" class="btn btn-outline-secondary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Categories" asp-route-id="@ev.EventId" class="btn btn-outline-warning text-dark" title="Categories">
+                                        <i class="bi bi-distribute-vertical"></i>
+                                    </a>
+                                    <a asp-action="ResultsEntry" asp-route-id="@ev.EventId" class="btn btn-outline-info" title="Results">
+                                        <i class="bi bi-trophy"></i>
+                                    </a>
+                                    <form asp-action="DeleteEvent" asp-route-id="@ev.EventId" method="post" class="d-inline" onsubmit="return confirm('Delete this event?');">
+                                        <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

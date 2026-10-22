@@ -1,0 +1,94 @@
+@model RaceDay.Web.Models.ResultsEntryViewModel
+@{
+    ViewData["Title"] = "Capture Results";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard">Organiser</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Events">Events</a></li>
+                    <li class="breadcrumb-item active">Results</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold mb-0">Capture &amp; Publish Official Results: @Model.EventName</h2>
+            <p class="text-muted small">Record official chip finish times and finishing positions for enrolled athletes.</p>
+        </div>
+        <a asp-action="Events" class="btn btn-outline-secondary rounded-pill px-3">Back to Events</a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+        <div class="card-header bg-dark-navy text-white py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0"><i class="bi bi-stopwatch me-2 text-warning"></i>Finisher Timing Console</h5>
+            <span class="badge bg-warning text-dark fw-bold">Live Results Entry</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-uppercase text-secondary">
+                    <tr>
+                        <th class="ps-4">Race #</th>
+                        <th>Participant</th>
+                        <th>Category</th>
+                        <th>Finish Time (HH:mm:ss)</th>
+                        <th>Overall Pos</th>
+                        <th>Category Pos</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Save</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Participants.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-stopwatch fs-2 d-block mb-2"></i>
+                                No enrolled participants found for this event.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var rank = 1;
+                        @foreach (var p in Model.Participants)
+                        {
+                            <tr>
+                                <form asp-action="PublishResult" method="post">
+                                    <input type="hidden" name="eventId" value="@Model.EventId" />
+                                    <input type="hidden" name="enrolmentId" value="@p.EnrolmentId" />
+                                    <td class="ps-4">
+                                        <span class="badge bg-dark font-monospace px-2 py-1">@(p.RaceNumber ?? "N/A")</span>
+                                    </td>
+                                    <td class="fw-bold">@p.ParticipantName</td>
+                                    <td><span class="badge bg-light text-dark border">@p.CategoryName</span></td>
+                                    <td style="max-width: 150px;">
+                                        <input type="text" name="finishTime" value="@p.FinishTime" class="form-control form-control-sm font-monospace text-center fw-bold" placeholder="01:25:30" required />
+                                    </td>
+                                    <td style="max-width: 100px;">
+                                        <input type="number" name="overallPosition" value="@(p.OverallPosition ?? rank)" class="form-control form-control-sm text-center fw-bold" />
+                                    </td>
+                                    <td style="max-width: 100px;">
+                                        <input type="number" name="categoryPosition" value="@(p.CategoryPosition ?? rank)" class="form-control form-control-sm text-center" />
+                                    </td>
+                                    <td style="max-width: 120px;">
+                                        <select name="status" class="form-select form-select-sm">
+                                            <option value="Finished" selected="@(p.Status == "Finished")">Finished</option>
+                                            <option value="DNF" selected="@(p.Status == "DNF")">DNF</option>
+                                            <option value="DSQ" selected="@(p.Status == "DSQ")">DSQ</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-bold">
+                                            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Publish
+                                        </button>
+                                    </td>
+                                </form>
+                            </tr>
+                            rank++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
