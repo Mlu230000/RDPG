@@ -11,7 +11,6 @@ Official Part 3 Final Project submission for **POE - Automation of Web Applicati
 ---
 
 ## Video Presentation & Demo Link
-- **YouTube / Loom Video Link**: [https://youtu.be/raceday-part3-walkthrough](https://youtu.be/raceday-part3-walkthrough) *(Replace with your final recording URL)*
 - **Presentation Contents**:
   1. Architecture walkthrough: MVC Web App calling REST API (strictly zero database queries in MVC).
   2. Organiser Interface: Dashboard KPI metrics, Event CRUD with Azure Blob banner image upload, Category management, Enrolments roster with color-coded status badges, and Results entry with finish times.
