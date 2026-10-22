@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage%20Build-2496ED.svg)](https://www.docker.com/)
 [![CI Build](https://img.shields.io/badge/CI%2FCD-Passing%20(Green)-success.svg)]()
 
-Official Part 3 Final Project submission for **POE - Automation of Web Application (Marks: 100)**.
+Official Part 3 Final Project **.
 
 ---
 
