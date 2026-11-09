@@ -52,20 +52,6 @@ Access endpoints:
 
 ---
 
-## Rubric Compliance Matrix (100 / 100 Marks)
-
-| Marking Criteria | Marks | Standard Achieved | Implementation Evidence |
-|-------------------|:-----:|:-----------------:|-------------------------|
-| **Correct Submission** | **5 / 5** | **Greatly Exceeds** | Clean folder structure (`RaceDay.Web`, `RaceDay.Api`, `RaceDay.Tests`), complete `README.md` with Docker run command, CI screenshot in `docs/ci_green_build.png`, and video presentation guide. |
-| **GitHub and CI/CD** | **10 / 10** | **Greatly Exceeds** | `.github/workflows/ci.yml` validates repository structure, builds the full solution, runs tests, and validates Docker containers. Meaningful commit history documented below. |
-| **Authentication & Role Navigation** | **10 / 10** | **Greatly Exceeds** | Fully working registration and login. Session stores `UserId`, `FullName`, `Email`, and `Role` (`Organiser` vs `Participant`). Custom action filters `[AuthorizeOrganiser]` and `[AuthorizeParticipant]` restrict unauthenticated users. Logout clears session. |
-| **Organiser Interface** | **15 / 15** | **Greatly Exceeds** | Dashboard with summary KPIs and upcoming dates; Event CRUD with name, description, date, location, distance, type, and Azure Blob banner upload; Category management for age/distance; Enrolments roster with color-coded statuses; Results entry console to capture and publish finish times and positions. |
-| **Participant Interface** | **15 / 15** | **Greatly Exceeds** | Home page with upcoming events and filter toolbar; Event detail page with categories and instant 1-click enrolment; My Enrolments view; My Results page showing finish times and finishing positions (e.g. *47th out of 312 finishers*); Athlete profile with Azure Blob photo upload. |
-| **Azure Blob Storage** | **10 / 10** | **Greatly Exceeds** | Full integration through `RaceDay.Api` using `Azure.Storage.Blobs`. MVC never speaks to Azure directly. Stores event banners (`event-banners`) and profile photos (`profile-pictures`). URLs stored in database and rendered in MVC views. |
-| **Docker** | **10 / 10** | **Greatly Exceeds** | Multi-stage production `Dockerfile` for `RaceDay.Web`. Single-command `docker run` in README. Identical local and containerized behavior. Multi-container `docker-compose.yml`. |
-| **UI Design** | **10 / 10** | **Greatly Exceeds** | Polished sporting energetic visual theme reflecting the **RaceDay** brand. Bootstrap 5.3 responsiveness. Distinct colour-coded status badges (Green = Confirmed, Amber = Pending). Robust input validation and error handling without crashes. |
-| **Video Presentation** | **15 / 15** | **Greatly Exceeds** | Complete video presentation outline, demonstration script, and link placeholder provided in README. |
-| **TOTAL** | **100 / 100** | **GREATLY EXCEEDS** | All requirements satisfied to the highest standard. |
 
 ---
 
