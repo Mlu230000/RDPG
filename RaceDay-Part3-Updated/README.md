@@ -39,3 +39,76 @@ docker run -d -p 8080:80 \
   -e "RaceDayApi__BaseUrl=[http://host.docker.internal:5000](http://host.docker.internal:5000)" \
   --name raceday-web \
   raceday-web:latest
+---
+
+## Detailed Project Folder Structure
+```
+RaceDay-Part3-Submission/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                   # CI/CD pipeline (build, test, docker validate)
+├── docs/
+│   └── ci_green_build.png           # CI green build screenshot
+├── RaceDay.sln                      # Visual Studio 2022 Solution (all 3 projects)
+├── docker-compose.yml               # Multi-container orchestration (Web + API + Azurite)
+├── raceday_schema.sql               # Base relational database schema
+├── raceday_part3_migration.sql      # Part 3 SQL migration (Azure Blob URL columns)
+├── README.md                        # Master documentation & video presentation script
+│
+├── RaceDay.Web/                     # ASP.NET Core 8.0 MVC Application
+│   ├── Controllers/
+│   │   ├── AccountController.cs     # Login, Register, Logout, Session management
+│   │   ├── HomeController.cs        # Public / Participant race browser with filters
+│   │   ├── EventsController.cs      # Event details, categories, instant enrolment
+│   │   ├── OrganiserController.cs   # Dashboard, Event CRUD, Categories, Enrolments, Results
+│   │   └── ParticipantController.cs # Enrol, My Enrolments, My Results, Athlete Profile
+│   ├── Services/
+│   │   ├── IRaceDayApiClient.cs     # Typed API Client Interface
+│   │   └── RaceDayApiClient.cs      # Consumes REST API (NO direct database access)
+│   ├── Filters/
+│   │   └── AuthorizeRoleAttribute.cs# [AuthorizeOrganiser] and [AuthorizeParticipant]
+│   ├── Models/
+│   │   └── ViewModels.cs            # Strongly-typed MVC ViewModels
+│   ├── Views/
+│   │   ├── Account/ (Login.cshtml, Register.cshtml)
+│   │   ├── Home/ (Index.cshtml)
+│   │   ├── Events/ (Details.cshtml)
+│   │   ├── Organiser/ (Dashboard, Events, CreateEvent, EditEvent, Categories, Enrolments, ResultsEntry)
+│   │   ├── Participant/ (MyEnrolments, MyResults, Profile)
+│   │   └── Shared/ (_Layout.cshtml, _ValidationScriptsPartial.cshtml)
+│   ├── wwwroot/
+│   │   ├── css/ (raceday.css)       # Sporting energetic design system
+│   │   └── js/ (site.js)
+│   ├── Dockerfile                   # Multi-stage production Dockerfile
+│   ├── Program.cs                   # Session state, HttpClient, Cookie authentication
+│   └── appsettings.json             # API base URL configuration
+│
+├── RaceDay.Api/                     # RESTful Web API (Part 2 upgraded with Azure Blob)
+│   ├── Controllers/
+│   │   ├── AuthController.cs
+│   │   ├── EventsController.cs      # Includes POST /{id}/banner Azure Blob endpoint
+│   │   ├── UsersController.cs       # Includes POST /{id}/profile-picture Azure Blob endpoint
+│   │   ├── FilesController.cs       # Generic Azure Blob upload endpoint
+│   │   ├── CategoriesController.cs
+│   │   ├── EnrolmentsController.cs
+│   │   └── ResultsController.cs
+│   ├── Services/
+│   │   ├── IAzureBlobService.cs     # Azure Blob Storage Interface
+│   │   ├── AzureBlobService.cs      # Azure Blob implementation with fallback simulation
+│   │   ├── IPasswordHasher.cs
+│   │   └── ITokenService.cs
+│   ├── Models/ (Event.cs, User.cs, Category.cs, Enrolment.cs, Result.cs, Role.cs, Route.cs)
+│   ├── DTOs/ (Dtos.cs)
+│   ├── Data/ (RaceDayDbContext.cs)
+│   ├── Dockerfile
+│   ├── Program.cs
+│   └── appsettings.json             # Azure Blob Storage connection strings
+│
+└── RaceDay.Tests/                   # Automated Unit & Integration Tests (xUnit)
+    ├── AuthTests.cs
+    ├── EnrolmentTests.cs
+    ├── EventManagementTests.cs
+    ├── ResultTests.cs
+    ├── RoleAuthorizationTests.cs
+    └── TestDbHelper.cs
+```
