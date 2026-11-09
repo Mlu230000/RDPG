@@ -31,7 +31,7 @@ Automated continuous integration is configured in `.github/workflows/ci.yml`. On
 
 ---
 
-## Single-Command Docker Instructions (Rubric: 10 Marks)
+## Single-Command Docker Instructions 
 
 ### Option A: Run MVC Web Application with Single Docker Run Command
 ```bash
