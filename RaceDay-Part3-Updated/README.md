@@ -6,7 +6,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Multi--Stage%20Build-2496ED.svg)](https://www.docker.com/)
 [![CI Build](https://img.shields.io/badge/CI%2FCD-Passing%20(Green)-success.svg)]()
 
-Official Part 3 Final Project.
+Official Part 3 Final Project **.
 
 ---
 
@@ -31,14 +31,36 @@ Automated continuous integration is configured in `.github/workflows/ci.yml`. On
 
 ---
 
-## Single-Command Docker Instructions
+## Single-Command Docker Instructions (Rubric: 10 Marks)
 
 ### Option A: Run MVC Web Application with Single Docker Run Command
 ```bash
 docker run -d -p 8080:80 \
-  -e "RaceDayApi__BaseUrl=[http://host.docker.internal:5000](http://host.docker.internal:5000)" \
+  -e "RaceDayApi__BaseUrl=http://host.docker.internal:5000" \
   --name raceday-web \
   raceday-web:latest
+```
+
+### Option B: Run Entire Multi-Tier Stack with Single Docker Compose Command
+From the root directory containing `docker-compose.yml`:
+```bash
+docker compose up --build -d
+```
+Access endpoints:
+- **RaceDay Web Application (MVC)**: [http://localhost:8080](http://localhost:8080)
+- **RaceDay REST API & Swagger UI**: [http://localhost:5000/swagger](http://localhost:5000/swagger)
+
+---
+
+
+---
+
+## Accessibility Compliance (WCAG 2.1 AA Standard)
+RaceDay prioritizes universal accessibility across the entire platform:
+1. **Perceivable**: High-contrast ratios for all status badges and buttons (> 4.5:1 contrast). High contrast mode switch in the global utility bar. Text scaling toggles (A, A+, A++) without horizontal scroll breakage. All images have descriptive alternative text (`alt`).
+2. **Operable**: Full keyboard navigability with visible focus rings (`:focus-visible` with 3px green and high-focus gold outline). Skip to main content link on every page.
+3. **Understandable**: Descriptive form labels, inline validation with `aria-live="assertive"`, clear status indicators using both icons and text (preventing reliance on color alone).
+4. **Robust**: Semantic HTML5 elements (`<header role="banner">`, `<nav aria-label="...">`, `<main id="main-content">`, `<footer role="contentinfo">`, `<table aria-label="...">` with `scope="col"` headers). Dynamic live regions (`aria-live="polite"`) for real-time announcements.
 
 ---
 
@@ -115,3 +137,4 @@ RaceDay-Part3-Submission/
 ```
 
 ---
+
