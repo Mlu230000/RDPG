@@ -39,6 +39,7 @@ docker run -d -p 8080:80 \
   -e "RaceDayApi__BaseUrl=[http://host.docker.internal:5000](http://host.docker.internal:5000)" \
   --name raceday-web \
   raceday-web:latest
+
 ---
 
 ## Detailed Project Folder Structure
@@ -112,3 +113,5 @@ RaceDay-Part3-Submission/
     ├── RoleAuthorizationTests.cs
     └── TestDbHelper.cs
 ```
+
+---
