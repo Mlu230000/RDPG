@@ -1,0 +1,134 @@
+@model RaceDay.Web.Models.CreateCategoryViewModel
+@{
+    ViewData["Title"] = "Manage Categories";
+    var ev = ViewBag.Event as RaceDay.Web.Models.EventItemViewModel;
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a asp-action="Dashboard">Organiser</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Events">Events</a></li>
+                    <li class="breadcrumb-item active">Categories</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold mb-0">Race Categories: @ev?.EventName</h2>
+            <p class="text-muted small">Add age or distance categories to configure entry fees and participant caps.</p>
+        </div>
+        <a asp-action="Events" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Events
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Category Form -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h4 class="fw-bold mb-3"><i class="bi bi-plus-circle-fill text-success me-2"></i>Add Category</h4>
+
+                <form asp-action="AddCategory" asp-route-id="@Model.EventId" method="post">
+                    <input type="hidden" asp-for="EventId" />
+                    <input type="hidden" asp-for="EventName" />
+
+                    <div class="mb-3">
+                        <label asp-for="CategoryName" class="form-label fw-bold small text-secondary"></label>
+                        <input asp-for="CategoryName" class="form-control" placeholder="e.g. 21.1km Half Marathon, 5km Fun Walk" />
+                        <span asp-validation-for="CategoryName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label asp-for="DistanceKm" class="form-label fw-bold small text-secondary"></label>
+                            <div class="input-group">
+                                <input asp-for="DistanceKm" class="form-control" placeholder="21.1" />
+                                <span class="input-group-text">km</span>
+                            </div>
+                            <span asp-validation-for="DistanceKm" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="EntryFee" class="form-label fw-bold small text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">R</span>
+                                <input asp-for="EntryFee" class="form-control" placeholder="250.00" />
+                            </div>
+                            <span asp-validation-for="EntryFee" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label asp-for="MinAge" class="form-label fw-bold small text-secondary"></label>
+                            <input asp-for="MinAge" class="form-control" placeholder="16" />
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="MaxAge" class="form-label fw-bold small text-secondary"></label>
+                            <input asp-for="MaxAge" class="form-control" placeholder="80" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="MaxParticipants" class="form-label fw-bold small text-secondary"></label>
+                        <input asp-for="MaxParticipants" class="form-control" placeholder="1000" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-2 shadow-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Add Category to Event
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Existing Categories List -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h4 class="fw-bold mb-3"><i class="bi bi-distribute-vertical text-warning me-2"></i>Current Categories</h4>
+
+                @if (ev?.Categories == null || !ev.Categories.Any())
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-tag fs-2 d-block mb-2"></i>
+                        No categories created yet. Use the form on the left to add distance and age categories.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small text-uppercase">
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Distance</th>
+                                    <th>Fee</th>
+                                    <th>Age Range</th>
+                                    <th>Cap</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in ev.Categories)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@c.CategoryName</td>
+                                        <td><span class="badge bg-success-subtle text-success border border-success">@c.DistanceKm km</span></td>
+                                        <td><strong>R @c.EntryFee.ToString("F2")</strong></td>
+                                        <td>
+                                            @if (c.MinAge.HasValue || c.MaxAge.HasValue)
+                                            {
+                                                <span>@(c.MinAge ?? 0) - @(c.MaxAge ?? 100) yrs</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Open</span>
+                                            }
+                                        </td>
+                                        <td>@(c.MaxParticipants?.ToString() ?? "Unlimited")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

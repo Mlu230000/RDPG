@@ -1,0 +1,75 @@
+@model RaceDay.Web.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-dark-navy text-white p-4 text-center">
+                    <h4 class="fw-bold mb-1">Create Your Account</h4>
+                    <p class="text-white-50 small mb-0">Join RaceDay as an Event Organiser or Participant Athlete</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger py-2 px-3 small border-0 shadow-sm mb-3">
+                            <div asp-validation-summary="All" class="text-danger mb-0"></div>
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post">
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-semibold text-secondary small"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="e.g. Sipho Ndlovu" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold text-secondary small"></label>
+                            <input asp-for="Email" class="form-control" placeholder="name@domain.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label fw-semibold text-secondary small"></label>
+                                <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label fw-semibold text-secondary small"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RoleId" class="form-label fw-semibold text-secondary small"></label>
+                            <select asp-for="RoleId" class="form-select">
+                                <option value="2">🏃 Participant (Enter Races & Track Results)</option>
+                                <option value="1">📋 Organiser (Create Events, Manage Categories & Enrolments)</option>
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Phone" class="form-label fw-semibold text-secondary small"></label>
+                            <input asp-for="Phone" class="form-control" placeholder="+27 82 123 4567" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-person-check-fill me-1"></i> Register Free
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted small">Already registered?</span>
+                        <a asp-action="Login" class="fw-bold text-success text-decoration-none small ms-1">Log in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
